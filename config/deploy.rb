@@ -40,7 +40,7 @@ namespace :bundle do
   task :install do
     run "rm -f #{current_path} && ln -s #{release_path} #{current_path}"    
     run "cd #{current_path} && bundle install"  
-    run "cd #{current_path} && rake db:migrate"
+    run "cd #{release_path} && rake db:migrate"
   end
 
 end
