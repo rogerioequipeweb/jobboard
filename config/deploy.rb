@@ -39,6 +39,7 @@ namespace :bundle do
   desc "run bundle install and ensure all gem requirements are met"
   task :install do
     run "cd #{current_path} && bundle install"
+    run "rake db:migrate"
   end
 
 end
