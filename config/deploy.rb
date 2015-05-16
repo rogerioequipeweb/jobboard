@@ -1,7 +1,7 @@
 # config valid only for current version of Capistrano
 lock '3.4.0'
 
-set :application, 'jobboard'
+set :application, 'my_app_name'
 set :repo_url, 'https://github.com/rogerioequipeweb/jobboard'
 
 # Default branch is :master
@@ -11,7 +11,7 @@ set :repo_url, 'https://github.com/rogerioequipeweb/jobboard'
 set :deploy_to, '/home/tideaweb/public_html/rails/jobboard'
 
 # Default value for :scm is :git
-set :scm, :git
+# set :scm, :git
 
 # Default value for :format is :pretty
 # set :format, :pretty
@@ -32,18 +32,25 @@ set :scm, :git
 # set :default_env, { path: "/opt/ruby/bin:$PATH" }
 
 # Default value for keep_releases is 5
-# set :keep_releases, 5
+set :keep_releases, 5
 
 namespace :deploy do
 
-  desc "Executando rotinas finais de migrate e install"
-  task :install do
-    run "rm -f #{current_path} && ln -s #{release_path} #{current_path}"    
-    run "cd #{current_path} && bundle install"  
-   end
+  after :finished, :clear_cache do
+    on roles(:web), in: :groups, limit: 3, wait: 10 do
+      # Here we can do anything such as:
+       within release_path do
+         execute :rake, 'db:migrate'
+       end
+    end
+  end
+
+ desc 'Restart application'
+  task :restart do
+    on roles(:app), in: :sequence, wait: 5 do
+      # Your restart mechanism here, for example:
+      execute :touch, release_path.join('tmp/restart.txt')
+    end
+  end
 
 end
-after "deploy:published"
-
-
-    
