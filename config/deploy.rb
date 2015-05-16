@@ -34,17 +34,16 @@ set :scm, :git
 # Default value for keep_releases is 5
 # set :keep_releases, 5
 
-namespace :bundle do
+namespace :deploy do
 
-  desc "run bundle install and ensure all gem requirements are met"
+  desc "Executando rotinas finais de migrate e install"
   task :install do
     run "rm -f #{current_path} && ln -s #{release_path} #{current_path}"    
     run "cd #{current_path} && bundle install"  
-    run "cd #{release_path} && rake db:migrate"
-  end
+   end
 
 end
-before "deploy:restart", "bundle:install"
+after "deploy:published"
 
 
     
